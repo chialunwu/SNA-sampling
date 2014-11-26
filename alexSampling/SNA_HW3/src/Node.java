@@ -16,4 +16,26 @@ public class Node {
 			this.attributes[i-2] = Integer.parseInt(token[i]);
 		}
 	}
+	
+	@Override
+	public String toString()
+	{
+		String s = ""+nodeID+" "+degree;
+		for (int a:attributes)
+			s += " "+a;
+		return s;
+	}
+	
+	@Override
+	public boolean equals(Object n)
+	{
+		return this.nodeID == ((Node)n).nodeID;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return nodeID;
+	}
+	
 }

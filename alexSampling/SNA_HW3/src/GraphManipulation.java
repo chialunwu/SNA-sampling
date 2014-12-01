@@ -198,13 +198,27 @@ public class GraphManipulation {
 	
 	public void addVertex(Node n)
 	{
-		addVertex(n, g, nodes);
+		if (!containsVertex(n))
+			addVertex(n, g, nodes);
 	}
 	
 	public void addEdge(Edge e)
 	{
-		e.edgeID = edgeCount++;
-		g.addEdge(e, e.node1, e.node2);
+		if (g.findEdge(e.node1, e.node2) == null)
+		{
+			e.edgeID = edgeCount++;
+			g.addEdge(e, e.node1, e.node2);
+		}
+	}
+	
+	public Node getVertex(int nodeID)
+	{
+		return nodes.get(nodeID);
+	}
+	
+	public int getDegree(Node n)
+	{
+		return g.getNeighborCount(n);
 	}
 	
 	public void visualizeGraph()
@@ -228,7 +242,7 @@ public class GraphManipulation {
 	
 	public void degreeDistri()
 	{
-		int[] degree = new int [1000];
+		int[] degree = new int [10000];
 		int maxDegree = 0;
 		for (Node n:g.getVertices())
 		{

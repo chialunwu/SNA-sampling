@@ -1,7 +1,8 @@
 import java.io.File;
 import java.util.ArrayList;
 
-public class SampleEdgeCount {
+
+public class RPS {
 	
 	public static String graphFileName = "SampleEdgeCountSampledGraph.txt";
 	public static String queryOutputDirName = "./SampleEdgeCount";
@@ -12,18 +13,34 @@ public class SampleEdgeCount {
 		
 		if (!outputFile.exists())
 		{
-			try {
-				initQueryOutputFile();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return;
-			}
+			initQueryOutputFile();
 			
 			int queryNum = 100;
+			double m = 0.9;
+			GraphManipulation queryG = new GraphManipulation();
 			GraphManipulation gm = new GraphManipulation();
-			ArrayList<Node> sampleNode = gm.uniformSampleFromSeeds(Query.getSeeds(), 1);
+			
+			
+			
+			String seedsStr = Query.getSeeds();
+			queryG.createSeedsSubgraph(seedsStr);
+			ArrayList<Node> sampleNode = gm.uniformSampleFromSeeds(seedsStr, 1);
 			Node currentNode = sampleNode.get(0);
+			Node currentNodeInQueryG = queryG.getVertex(currentNode.nodeID);
+			int queryCount = 1;
+			
+			
+			
+			
+			if (queryG.getDegree(currentNodeInQueryG) < currentNodeInQueryG.degree*m)		//too few neighbor of this node in the queryG
+			{
+				//query
+				
+			}
+			else
+			{
+				
+			}
 			ArrayList<Edge> neighbors = new ArrayList<Edge>();
 			for (int i = 1; i < queryNum; i++)
 			{
@@ -73,20 +90,28 @@ public class SampleEdgeCount {
 			queryOutputDir.mkdir();
 		}
 	}
+}
+
+class RPStatistic
+{
+	int [][]RPCount;
+	int typeCount[];
+	int typeDegree[];
 	
-	public static Edge biggestEdgeCountNeighbor(GraphManipulation gm, Node currentNode, ArrayList<Edge> neighbors)
+	public RPStatistic(int dimension)
 	{
-		Edge biggest = neighbors.get(0);
-		ArrayList<Edge> removeList = new ArrayList<Edge>();
-		for (Edge n:neighbors)
-		{
-			if (gm.containsVertex(n.node2))
-				removeList.add(n);
-			else if (n.node2.degree > biggest.node2.degree)		//not traversed yet, and bigger
-				biggest = n;
-		}
-		neighbors.removeAll(removeList);
-		return biggest;
+		RPCount = new int[dimension][];
+		for (int i = 0; i < dimension; i++)
+			RPCount[i] = new int[dimension];
+		typeCount = new int [dimension];
+		typeDegree = new int [dimension];
 	}
 	
+	private double deltaRP(int addedNodeID, GraphManipulation queryG)
+	{
+		Node addedNode = queryG.getVertex(addedNodeID);
+		
+	}
+	
+	private 
 }

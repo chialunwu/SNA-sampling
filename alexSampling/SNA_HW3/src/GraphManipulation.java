@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
@@ -22,10 +23,10 @@ import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 
 public class GraphManipulation {
 	
-	private Graph<Node, Edge> g;
-	private HashMap<Integer, Node> nodes;
-	private int nodeAttriNum;
-	private int edgeAttriNum;
+	protected Graph<Node, Edge> g;
+	protected HashMap<Integer, Node> nodes;
+	protected int nodeAttriNum;
+	protected int edgeAttriNum;
 	private int edgeCount;
 	
 	/*public static void main(String[] args)
@@ -101,7 +102,7 @@ public class GraphManipulation {
 		Node node = getVertex(nodeID, nodes), neighbor;
 		Edge edge;
 		ArrayList<Edge> neighbors = new ArrayList<Edge>(lines.length-2);
-		for (int i = 2; i < lines.length; i++)
+		for (int i = 3; i < lines.length; i++)
 		{
 			token = lines[i].split(" ");
 			nodeStr = token[0];
@@ -221,12 +222,22 @@ public class GraphManipulation {
 		return g.getNeighborCount(n);
 	}
 	
+	public Collection<Node> getNeighbor(Node n)
+	{
+		return g.getNeighbors(n);
+	}
+	
+	public Collection<Node> getVertices()
+	{
+		return g.getVertices();
+	}
+	
 	public void visualizeGraph()
 	{
 		// The Layout<V, E> is parameterized by the vertex and edge types
-        Layout<Node, Edge> layout = new FRLayout<Node,Edge>(g);
+        //Layout<Node, Edge> layout = new FRLayout<Node,Edge>(g);
 		//Layout<Node, Edge> layout = new FRLayout2<Node,Edge>(g);
-		//Layout<Node, Edge> layout = new ISOMLayout<Node,Edge>(g);
+		Layout<Node, Edge> layout = new ISOMLayout<Node,Edge>(g);
 		//Layout<Node, Edge> layout = new KKLayout<Node,Edge>(g);
         layout.setSize(new Dimension(1400,700)); // sets the initial size of the layout space
         // The BasicVisualizationServer<V,E> is parameterized by the vertex and edge types
@@ -257,7 +268,7 @@ public class GraphManipulation {
 		}
 	}
 	
-	private int[] uniformRandomArray(int start, int arrayLength, int randomNum)
+	protected int[] uniformRandomArray(int start, int arrayLength, int randomNum)
 	{
 		int[] array = new int [arrayLength];
 		for (int i = 0; i < arrayLength; i++)
@@ -274,7 +285,7 @@ public class GraphManipulation {
 		return array;
 	}
 	
-	private Node getVertex(String nodeStr, HashMap<Integer, Node> nodes)
+	protected Node getVertex(String nodeStr, HashMap<Integer, Node> nodes)
 	{
 		int nodeID = Integer.parseInt(nodeStr.split(" ")[0]);
 		
@@ -286,7 +297,7 @@ public class GraphManipulation {
 		}
 	}
 	
-	private Node getVertex(int nodeID, HashMap<Integer, Node> nodes)
+	protected Node getVertex(int nodeID, HashMap<Integer, Node> nodes)
 	{
 		if (nodes.containsKey(nodeID))
 			return nodes.get(nodeID);
@@ -296,7 +307,7 @@ public class GraphManipulation {
 		}
 	}
 	
-	private void addVertex(Node n, Graph<Node, Edge> g, HashMap<Integer, Node> nodes)
+	protected void addVertex(Node n, Graph<Node, Edge> g, HashMap<Integer, Node> nodes)
 	{
 		if (!nodes.containsKey(n.nodeID))
 		{
@@ -307,7 +318,7 @@ public class GraphManipulation {
 		}
 	}
 	
-	private Edge getEdge(String edgeStr, Node node1, Node node2)
+	protected Edge getEdge(String edgeStr, Node node1, Node node2)
 	{
 		Edge edge = g.findEdge(node1, node2);
 		if (edge == null)

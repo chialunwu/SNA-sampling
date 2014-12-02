@@ -60,7 +60,7 @@ public class SampleEdgeCountInducedGraph {
 		{
 			GraphManipulation gm = new GraphManipulation();
 			gm.readGraph(graphFileName);
-			gm.visualizeGraph();
+			//gm.visualizeGraph();
 			gm.degreeDistri();
 		}
 	}

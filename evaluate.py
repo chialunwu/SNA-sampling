@@ -114,4 +114,4 @@ elif method == '-c':
     R = float(sum([ol.index(e) for e in sl]))/len(sl)
 
     # Average true rank
-    print "Average tre rank: %f" % R
+    print "Average true rank: %f" % R

@@ -16,6 +16,7 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout2;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.scoring.DistanceCentralityScorer;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
@@ -150,6 +151,103 @@ public class GraphManipulation {
 		}
 	}
 	
+	public void outputAns(String outputAnsDirName) throws Exception
+	{
+		File outputAnsDir = new File(outputAnsDirName);
+		if (outputAnsDir.exists())
+		{
+			System.out.println("output ans directory existed!");
+			throw new Exception();
+		}
+		else
+		{
+			outputAnsDir.mkdir();
+			//output degree
+			PrintStream outputDegree = new PrintStream(new File(outputAnsDirName+"/degree.txt"));
+			int[] degree = new int [10000];
+			int maxDegree = 0;
+			for (Node n:g.getVertices())
+			{
+				if (maxDegree < g.getNeighborCount(n))
+					maxDegree = g.getNeighborCount(n);
+				degree[g.getNeighborCount(n)]++;
+			}
+			
+			for (int i = 1; i < maxDegree+1; i++)
+			{
+				outputDegree.println((double)degree[i]/g.getVertexCount());
+			}
+			outputDegree.close();
+			
+			//output closeness
+			PrintStream outputCloseness = new PrintStream(new File(outputAnsDirName+"/closeness.txt"));
+			DistanceCentralityScorer<Node, Edge> closenessScorer = new DistanceCentralityScorer<Node, Edge> (g, true);
+			int[] nodeID = new int[g.getVertexCount()];
+			double[] score = new double[g.getVertexCount()];
+			int[] sortedIndex = new int[g.getVertexCount()];
+			int topN = 100;
+			int count = 0;
+			for (Node n:g.getVertices())
+			{
+				nodeID[count] = n.nodeID;
+				score[count] = closenessScorer.getVertexScore(n);
+				sortedIndex[count] = count;
+				count++;
+			}
+			getSortedIndex(sortedIndex, score, 0, score.length-1);
+			for (int i = 0; i < topN; i++)
+				outputCloseness.println(nodeID[sortedIndex[nodeID.length-1-i]]);
+			outputCloseness.close();
+			
+			//output node_attr_k
+			for (int k = 1; k < this.nodeAttriNum+1; k++)
+			{
+				PrintStream outputNodeAttr = new PrintStream(new File(outputAnsDirName+"/node_attr_"+k+".txt"));
+				int[] numAttrValue = new int[100000];
+				for(Node n:g.getVertices())
+					numAttrValue[n.attributes[k-1]]++;
+				for (int i = 0; i < numAttrValue.length; i++)
+				{
+					if (numAttrValue[i] != 0)
+						outputNodeAttr.println(i+"\t"+numAttrValue[i]);
+				}
+				outputNodeAttr.close();
+			}
+		}
+		
+	}
+	
+	private static int partition(int index[], double arr[], int left, int right)
+	{
+	      int i = left, j = right;
+	      int tmp;
+	      double pivot = arr[index[(left + right) / 2]];
+	     
+	      while (i <= j) {
+	            while (arr[index[i]] < pivot)
+	                  i++;
+	            while (arr[index[j]] > pivot)
+	                  j--;
+	            if (i <= j) {
+	                  tmp = index[i];
+	                  index[i] = index[j];
+	                  index[j] = tmp;
+	                  i++;
+	                  j--;
+	            }
+	      };
+	     
+	      return i;
+	}
+	 
+	private static void getSortedIndex(int index[], double arr[], int left, int right) {
+	      int indexI = partition(index, arr, left, right);
+	      if (left < indexI - 1)
+	    	  getSortedIndex(index, arr, left, indexI - 1);
+	      if (indexI < right)
+	    	  getSortedIndex(index, arr, indexI, right);
+	}
+	
 	public void readGraph(String inputFileName)
 	{
 		BufferedReader input = null;
@@ -210,6 +308,11 @@ public class GraphManipulation {
 			e.edgeID = edgeCount++;
 			g.addEdge(e, e.node1, e.node2);
 		}
+	}
+	
+	public boolean containsEdge(Edge e)
+	{
+		return g.findEdge(e.node1, e.node2) != null;
 	}
 	
 	public Node getVertex(int nodeID)

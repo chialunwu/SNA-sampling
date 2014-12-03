@@ -165,7 +165,7 @@ elif method == '-n':
 elif method == '-c':
     ol = load_rank(ori)
     sl = load_rank(spl)
-    R = float(sum([ol.index(e) for e in sl])) / len(sl)
+    R = float(sum([ol.index(e) for e in sl if e in ol])) / len(sl)
 
     # Average true rank
     print("Average true rank: %f" % R)

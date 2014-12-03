@@ -51,7 +51,7 @@ def load_dist(file):
         for l in f:
             l = l.strip().split()
             d[int(l[0])] = float(l[1])
-    if d.values()[0] >= 1:
+    if list(d.values())[0] >= 1:
         y = sum(d.values())
         for k in d:
             d[k] = float(d[k]) / y

@@ -175,7 +175,8 @@ public class GraphManipulation {
 			
 			for (int i = 1; i < maxDegree+1; i++)
 			{
-				outputDegree.println((double)degree[i]/g.getVertexCount());
+				if (degree[i] != 0)
+					outputDegree.println(i+"\t"+((double)degree[i]/g.getVertexCount()));
 			}
 			outputDegree.close();
 			
@@ -189,7 +190,7 @@ public class GraphManipulation {
 				for (int i = 0; i < numAttrValue.length; i++)
 				{
 					if (numAttrValue[i] != 0)
-						outputNodeAttr.println(i+"\t"+numAttrValue[i]);
+						outputNodeAttr.println(i+"\t"+((double)numAttrValue[i]/g.getVertexCount()));
 				}
 				outputNodeAttr.close();
 			}

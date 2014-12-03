@@ -109,7 +109,7 @@ except:
     print("\nSYNOPSIS\n\tevaluate OPTION ORINAL_FILE SAMLE_FILE")
     print("\nDESCRIPTION")
     print("\tEPSILON: 0.00001")
-    print("\t-d\n\t\tdegree distribution")
+    print("\t-d [--plot]\n\t\tdegree distribution")
     print("\t-n\n\t\tnode attribute distribution")
     print("\t-c\n\t\tcloseness centrality")
     print("\nFILE FORMAT")
@@ -140,12 +140,13 @@ if method == '-d':
     # KL-divergence
     print("KL divergence: %f" % KL_divergence(od, sd))
 
-    draw_hist(bin, od, sd, KL_divergence(od, sd))
+    if "--plot" in sys.argv:
+        draw_hist(bin, od, sd, KL_divergence(od, sd))
 elif method == '-n':
     od = load_dist(ori)
     sd = load_dist(spl)
 
-    bin = od.keys()
+    bin = list(od.keys())
 
     ok = [k for k in od.keys()]
     od = sum_to_one([e for e in od.values()])
@@ -159,7 +160,8 @@ elif method == '-n':
     # KL-divergence
     print("KL divergence: %f" % KL_divergence(od, sd))
 
-    draw_hist(bin, od, sd, KL_divergence(od, sd), rotation=90)
+    if "--plot" in sys.argv:
+        draw_hist(bin, od, sd, KL_divergence(od, sd), rotation=90)
 elif method == '-c':
     ol = load_rank(ori)
     sl = load_rank(spl)

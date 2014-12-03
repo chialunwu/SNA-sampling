@@ -5,26 +5,41 @@ import networkx as nx
 from model.social_network import SocialNetwork
 import sys
 from math import *
+import matplotlib.pyplot as plt
+
+EPSILON = 0.00001
 
 
-def bin_hist(d, bin_size):
-    hist = [0] * (max(d.keys()) / bin_size + 1)
+def sum_to_one(li):
+    l = []
+    y = sum(li)
+    for k in li:
+        l.append(float(k) / y)
+
+    return l
+
+def bin_hist(d, bin):
+    hist = [EPSILON] * len(bin)
     for k, v in d.items():
-        hist[k / bin_size] += v
-    return hist
+        for i, e in enumerate(bin):
+            if len(e) == 2:
+                if e[0] <= k <= e[1]:
+                    hist[i] += v
+            elif len(e) == 1:
+                if e[0] <= k:
+                    hist[i] += v
+    return sum_to_one(hist)
 
 
 def entropy(p, q):
     s = 0
     if type(p) is list:
         for i in range(len(p)):
-            if p[i] != 0 and q[i] != 0:
-                s += p[i] * log(float(p[i]) / q[i])
+            s += p[i] * log(float(p[i]) / q[i])
     elif type(p) is dict:
         for k, v in p.items():
             try:
-                if v != 0 and q[k] != 0:
-                    s += v * log(float(v) / q[k])
+                s += v * log(float(v) / q[k])
             except:
                 pass
     else:
@@ -57,16 +72,44 @@ def load_dist(file):
             d[k] = float(d[k]) / y
     return d
 
+
+def draw_hist(bin, od, sd, KL, rotation=50):
+    fig, ax = plt.subplots()
+
+    index = range(len(bin))
+    bar_width = 0.35
+    opacity = 0.5
+
+    plt.bar(index, od, bar_width,
+            alpha=opacity,
+            color='b',
+            label='Original')
+
+    plt.bar([x+bar_width for x in index], sd, bar_width,
+            alpha=opacity,
+            color='r',
+            label='Sampled')
+
+    plt.ylabel('Proportion')
+    plt.title("KL-divergence: %f" % KL)
+    plt.xticks([x+bar_width for x in index], bin, rotation=rotation)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
 try:
-    method = sys.argv[1]    # degree dist:-d, closeness: -c, node: -n
+    method = sys.argv[1]  # degree dist:-d, closeness: -c, node: -n
     ori = sys.argv[-2]
     spl = sys.argv[-1]
 except:
-    print("-------- Usage -------")
+    print("-------------------- Manual -------------------")
     print("\nNAME\n\tevaluate - evaluate sample graph with original graph")
     print("\nSYNOPSIS\n\tevaluate OPTION ORINAL_FILE SAMLE_FILE")
     print("\nDESCRIPTION")
-    print("\t-d, [--bin]\n\t\tdegree distribution\n\t\t--bin: bin width")
+    print("\tEPSILON: 0.00001")
+    print("\t-d\n\t\tdegree distribution")
     print("\t-n\n\t\tnode attribute distribution")
     print("\t-c\n\t\tcloseness centrality")
     print("\nFILE FORMAT")
@@ -83,34 +126,44 @@ except:
     sys.exit()
 
 if method == '-d':
-    try:
-        if '--bin' in sys.argv:
-            bin_size = int(sys.argv[sys.argv.index('--bin')+1])
-        else:
-            bin_size = 5
-    except:
-        bin_size = 5
+    bin = [[1, 1], [2, 2], [3, 3], [4, 6], [7, 10], [11, 15], [16, 21], [22, 28], [29, 36], [37, 45], [46, 55],
+           [56, 70], [71, 100], [101, 200], [201]]
+
     # Degree distribution of original graph
     od = load_dist(ori)
-    od = bin_hist(od, bin_size)
+    od = bin_hist(od, bin)
 
     # Degree distribution of sampled graph
     sd = load_dist(spl)
-    sd = bin_hist(sd, bin_size)
-    sd += [0] * (len(od) - len(sd))
+    sd = bin_hist(sd, bin)
 
     # KL-divergence
     print("KL divergence: %f" % KL_divergence(od, sd))
+
+    draw_hist(bin, od, sd, KL_divergence(od, sd))
 elif method == '-n':
     od = load_dist(ori)
     sd = load_dist(spl)
 
+    bin = od.keys()
+
+    ok = [k for k in od.keys()]
+    od = sum_to_one([e for e in od.values()])
+
+    td = [EPSILON] * len(od)
+    for k, v in sd.items():
+        if k in ok:
+            td[ok.index(k)] = v
+    sd = sum_to_one(td)
+
     # KL-divergence
     print("KL divergence: %f" % KL_divergence(od, sd))
+
+    draw_hist(bin, od, sd, KL_divergence(od, sd), rotation=90)
 elif method == '-c':
     ol = load_rank(ori)
     sl = load_rank(spl)
-    R = float(sum([ol.index(e) for e in sl]))/len(sl)
+    R = float(sum([ol.index(e) for e in sl])) / len(sl)
 
     # Average true rank
     print("Average true rank: %f" % R)

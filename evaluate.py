@@ -100,7 +100,7 @@ if method == '-d':
     sd += [0] * (len(od) - len(sd))
 
     # KL-divergence
-    print("KL divergence: %f" % KL_divergence(od, sd)
+    print("KL divergence: %f" % KL_divergence(od, sd))
 elif method == '-n':
     od = load_dist(ori)
     sd = load_dist(spl)

@@ -8,17 +8,23 @@ import java.util.HashSet;
 public class RPS {
 	
 	public static String graphFileName = "RPSGraph.txt";
-	public static String queryOutputDirName = "./RPS";
+	public static String queryOutputDirName = "/RPS";
 	public static String outputAnsDirName = "./RPSOutputAns";
 	public static int queryNum = 110;
 	
+	public static int attributeIndex = -1;
+	
+	private static final int[] histogram = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,40,50,60,70,80,90,100,200};
+	
+	private static final int[] dimension = new int[]{2, 2, 10, 10, 140};
+	
 	public static void main(String[] args)
 	{
-		if (args.length != 4)
+		if (args.length != 5)
 		{
 			System.out.println("Wrong number of args");
-			System.out.println("Usage: java -cp SNA_HW3.jar RPS <graph outputfile name> <query outputDirectory name> <query times> <output ans dir>");
-			System.out.println("Using default args: java -cp SNA_HW3.jar RPS "+graphFileName+" "+queryOutputDirName+" "+queryNum);
+			System.out.println("Usage: java -cp SNA_HW3.jar RPS <graph outputfile name> <query outputDirectory name> <query times> <output ans dir> <attri index>");
+			System.out.println("Using default args: java -cp SNA_HW3.jar RPS "+graphFileName+" "+queryOutputDirName+" "+queryNum+" "+outputAnsDirName+" "+attributeIndex);
 		}
 		else
 		{
@@ -26,6 +32,7 @@ public class RPS {
 			queryOutputDirName = args[1];
 			queryNum = Integer.parseInt(args[2]);
 			outputAnsDirName = args[3];
+			attributeIndex = Integer.parseInt(args[4]);
 		}
 		
 		File outputFile = new File(graphFileName);
@@ -45,9 +52,11 @@ public class RPS {
 			String seedsStr = Query.getSeeds();
 			ArrayList<Node> sampleNode = gm.uniformSampleFromSeeds(seedsStr, 1);
 			
-			int histogram[] = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,40,50,60,70,80,90,100,200};
-			RPStatistic theRPStatistic = new RPStatistic(-1, histogram);			//attribute -1: degree, range: histogram
-			//RPStatistic theRPStatistic = new RPStatistic(1, 2);			//attribute -1: degree, range: histogram
+			RPStatistic theRPStatistic = null;
+			if (attributeIndex == -1)
+				theRPStatistic = new RPStatistic(-1, histogram);			//attribute -1: degree, range: histogram
+			else
+				theRPStatistic = new RPStatistic(attributeIndex, dimension[attributeIndex]);			//attributes
 			RPSNode addedNode = (RPSNode)sampleNode.get(0);
 			HashSet<RPSNode> neighbors = new HashSet<RPSNode>();
 			ArrayList<Edge> neighborsEdge = new ArrayList<Edge>();
@@ -109,9 +118,9 @@ public class RPS {
 	
 	public static void initQueryOutputFile() throws Exception
 	{
-		File queryOutputDir = new File(queryOutputDirName);
-		Query.queryOutputNeighborFileName = queryOutputDirName+"/neighbor";
-		Query.queryOutputSeedFileName = queryOutputDirName+"/seed";
+		File queryOutputDir = new File("./Query"+queryOutputDirName);
+		Query.queryOutputNeighborFileName = "./Query"+queryOutputDirName+"/neighbor";
+		Query.queryOutputSeedFileName = "./Query"+queryOutputDirName+"/seed";
 		Query.queryNeighborTimes = 0;
 		Query.querySeedTimes = 0;
 		if (queryOutputDir.exists())

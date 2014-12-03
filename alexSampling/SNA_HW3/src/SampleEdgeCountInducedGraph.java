@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class SampleEdgeCountInducedGraph {
 	
 	public static String graphFileName = "SampleEdgeCountInducedGraph.txt";
-	public static String queryOutputDirName = "./SampleEdgeCountInducedGraph";
+	public static String queryOutputDirName = "/SampleEdgeCountInducedGraph";
 	public static String outputAnsDirName = "./SampleEdgeCountInducedGraphOutputAns";
 	public static int queryNum = 10;
 	
@@ -18,7 +18,7 @@ public class SampleEdgeCountInducedGraph {
 		{
 			System.out.println("Wrong number of args");
 			System.out.println("Usage: java -cp SNA_HW3.jar SampleEdgeCountInducedGraph <graph outputfile name> <query outputDirectory name> <query times> <output ans dir>");
-			System.out.println("Using default args: java -cp SNA_HW3.jar SampleEdgeCountInducedGraph "+graphFileName+" "+queryOutputDirName+" "+queryNum);
+			System.out.println("Using default args: java -cp SNA_HW3.jar SampleEdgeCountInducedGraph "+graphFileName+" "+queryOutputDirName+" "+queryNum+" "+outputAnsDirName);
 		}
 		else
 		{
@@ -93,9 +93,9 @@ public class SampleEdgeCountInducedGraph {
 	
 	public static void initQueryOutputFile() throws Exception
 	{
-		File queryOutputDir = new File(queryOutputDirName);
-		Query.queryOutputNeighborFileName = queryOutputDirName+"/neighbor";
-		Query.queryOutputSeedFileName = queryOutputDirName+"/seed";
+		File queryOutputDir = new File("./Query"+queryOutputDirName);
+		Query.queryOutputNeighborFileName = "./Query"+queryOutputDirName+"/neighbor";
+		Query.queryOutputSeedFileName = "./Query"+queryOutputDirName+"/seed";
 		Query.queryNeighborTimes = 0;
 		Query.querySeedTimes = 0;
 		if (queryOutputDir.exists())

@@ -179,26 +179,6 @@ public class GraphManipulation {
 			}
 			outputDegree.close();
 			
-			//output closeness
-			PrintStream outputCloseness = new PrintStream(new File(outputAnsDirName+"/closeness.txt"));
-			DistanceCentralityScorer<Node, Edge> closenessScorer = new DistanceCentralityScorer<Node, Edge> (g, true);
-			int[] nodeID = new int[g.getVertexCount()];
-			double[] score = new double[g.getVertexCount()];
-			int[] sortedIndex = new int[g.getVertexCount()];
-			int topN = 100;
-			int count = 0;
-			for (Node n:g.getVertices())
-			{
-				nodeID[count] = n.nodeID;
-				score[count] = closenessScorer.getVertexScore(n);
-				sortedIndex[count] = count;
-				count++;
-			}
-			getSortedIndex(sortedIndex, score, 0, score.length-1);
-			for (int i = 0; i < topN; i++)
-				outputCloseness.println(nodeID[sortedIndex[nodeID.length-1-i]]);
-			outputCloseness.close();
-			
 			//output node_attr_k
 			for (int k = 1; k < this.nodeAttriNum+1; k++)
 			{
@@ -213,6 +193,34 @@ public class GraphManipulation {
 				}
 				outputNodeAttr.close();
 			}
+			
+			//output closeness
+			PrintStream outputCloseness = new PrintStream(new File(outputAnsDirName+"/closeness.txt"));
+			DistanceCentralityScorer<Node, Edge> closenessScorer = new DistanceCentralityScorer<Node, Edge> (g, true);
+			int[] nodeID = new int[g.getVertexCount()];
+			double[] score = new double[g.getVertexCount()];
+			int[] sortedIndex = new int[g.getVertexCount()];
+			int topN = 100;
+			int count = 0;
+			try
+			{
+				for (Node n:g.getVertices())
+				{
+					nodeID[count] = n.nodeID;
+					score[count] = closenessScorer.getVertexScore(n);
+					sortedIndex[count] = count;
+					count++;
+				}
+				getSortedIndex(sortedIndex, score, 0, score.length-1);
+				for (int i = 0; i < topN; i++)
+					outputCloseness.println(nodeID[sortedIndex[nodeID.length-1-i]]);
+			}
+			catch (java.lang.OutOfMemoryError e)
+			{
+				e.printStackTrace();
+				e.printStackTrace(outputCloseness);
+			}
+			outputCloseness.close();
 		}
 		
 	}

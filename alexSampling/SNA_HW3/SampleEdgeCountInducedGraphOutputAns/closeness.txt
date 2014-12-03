@@ -1,100 +1,14 @@
-67615
-2796
-20851
-66067
-66934
-70385
-277343
-71521
-165360
-620496
-106875
-210627
-194715
-398731
-259732
-2271
-8964
-67936
-335375
-336008
-128183
-724518
-724519
-724214
-259183
-167467
-623985
-312804
-472262
-55591
-724208
-724528
-70829
-233032
-411065
-183893
-724529
-414832
-724530
-460209
-611492
-724212
-724523
-55014
-50827
-231050
-133751
-269360
-599634
-214616
-67268
-169673
-625213
-444130
-39961
-404087
-431826
-242909
-22234
-390347
-100995
-40027
-40029
-724524
-371352
-42510
-724526
-133768
-384062
-378420
-474175
-312899
-240244
-50710
-460312
-461425
-22885
-724629
-724628
-271583
-304339
-690960
-724194
-339628
-701459
-724625
-50408
-282270
-84748
-812270
-245015
-163070
-724631
-312440
-425277
-320633
-209908
-724683
-724682
-30884
+java.lang.OutOfMemoryError: Java heap space
+	at java.util.HashMap.newNode(Unknown Source)
+	at java.util.HashMap.putVal(Unknown Source)
+	at java.util.HashMap.put(Unknown Source)
+	at java.util.HashSet.add(Unknown Source)
+	at edu.uci.ics.jung.graph.UndirectedSparseMultigraph.getNeighbors(UndirectedSparseMultigraph.java:192)
+	at edu.uci.ics.jung.graph.UndirectedSparseMultigraph.getSuccessors(UndirectedSparseMultigraph.java:178)
+	at edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler.labelDistances(BFSDistanceLabeler.java:123)
+	at edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler.labelDistances(BFSDistanceLabeler.java:145)
+	at edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath.computeShortestPathsFromSource(UnweightedShortestPath.java:86)
+	at edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath.getDistanceMap(UnweightedShortestPath.java:58)
+	at edu.uci.ics.jung.algorithms.scoring.DistanceCentralityScorer.getVertexScore(DistanceCentralityScorer.java:204)
+	at GraphManipulation.outputAns(GraphManipulation.java:210)
+	at SampleEdgeCountInducedGraph.main(SampleEdgeCountInducedGraph.java:73)

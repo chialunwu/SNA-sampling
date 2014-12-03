@@ -5,9 +5,25 @@ public class SampleEdgeCount {
 	
 	public static String graphFileName = "SampleEdgeCountSampledGraph.txt";
 	public static String queryOutputDirName = "./SampleEdgeCount";
+	public static String outputAnsDirName = "./SampleEdgeCountOutputAns";
+	public static int queryNum = 110;
 	
 	public static void main(String[] args)
 	{
+		if (args.length != 4)
+		{
+			System.out.println("Wrong number of args");
+			System.out.println("Usage: java -cp SNA_HW3.jar SampleEdgeCount <graph outputfile name> <query outputDirectory name> <query times> <output ans dir>");
+			System.out.println("Using default args: java -cp SNA_HW3.jar SampleEdgeCount "+graphFileName+" "+queryOutputDirName+" "+queryNum);
+		}
+		else
+		{
+			graphFileName = args[0];
+			queryOutputDirName = args[1];
+			queryNum = Integer.parseInt(args[2]);
+			outputAnsDirName = args[3];
+		}
+		
 		File outputFile = new File(graphFileName);
 		
 		if (!outputFile.exists())
@@ -20,7 +36,7 @@ public class SampleEdgeCount {
 				return;
 			}
 			
-			int queryNum = 100;
+			
 			GraphManipulation gm = new GraphManipulation();
 			ArrayList<Node> sampleNode = gm.uniformSampleFromSeeds(Query.getSeeds(), 1);
 			Node currentNode = sampleNode.get(0);
@@ -45,6 +61,12 @@ public class SampleEdgeCount {
 				}
 			}
 			
+			try {
+				gm.outputAns(outputAnsDirName);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			gm.outputGraph(graphFileName);
 		}
 		else
@@ -52,7 +74,12 @@ public class SampleEdgeCount {
 			GraphManipulation gm = new GraphManipulation();
 			gm.readGraph(graphFileName);
 			gm.visualizeGraph();
-			//gm.degreeDistri();
+			try {
+				gm.outputAns(outputAnsDirName);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

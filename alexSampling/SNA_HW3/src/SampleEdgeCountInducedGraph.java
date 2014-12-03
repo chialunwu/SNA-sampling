@@ -9,9 +9,25 @@ public class SampleEdgeCountInducedGraph {
 	
 	public static String graphFileName = "SampleEdgeCountInducedGraph.txt";
 	public static String queryOutputDirName = "./SampleEdgeCountInducedGraph";
+	public static String outputAnsDirName = "./SampleEdgeCountInducedGraphOutputAns";
+	public static int queryNum = 10;
 	
 	public static void main(String[] args)
 	{
+		if (args.length != 4)
+		{
+			System.out.println("Wrong number of args");
+			System.out.println("Usage: java -cp SNA_HW3.jar SampleEdgeCountInducedGraph <graph outputfile name> <query outputDirectory name> <query times> <output ans dir>");
+			System.out.println("Using default args: java -cp SNA_HW3.jar SampleEdgeCountInducedGraph "+graphFileName+" "+queryOutputDirName+" "+queryNum);
+		}
+		else
+		{
+			graphFileName = args[0];
+			queryOutputDirName = args[1];
+			queryNum = Integer.parseInt(args[2]);
+			outputAnsDirName = args[3];
+		}
+		
 		File outputFile = new File(graphFileName);
 		
 		if (!outputFile.exists())
@@ -24,7 +40,6 @@ public class SampleEdgeCountInducedGraph {
 				return;
 			}
 			
-			int queryNum = 100;
 			GraphManipulation gWalker = new GraphManipulation();
 			ArrayList<Node> sampleNode = gWalker.uniformSampleFromSeeds(Query.getSeeds(), 1);
 			Node currentNode = sampleNode.get(0);
@@ -54,14 +69,25 @@ public class SampleEdgeCountInducedGraph {
 			}
 			
 			GraphManipulation inducedG = inducedGraphFromQueryOutputFile(queryNum, addedOrder);
+			try {
+				inducedG.outputAns(outputAnsDirName);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			inducedG.outputGraph(graphFileName);
 		}
 		else
 		{
 			GraphManipulation gm = new GraphManipulation();
 			gm.readGraph(graphFileName);
-			//gm.visualizeGraph();
-			gm.degreeDistri();
+			gm.visualizeGraph();
+			try {
+				gm.outputAns(outputAnsDirName);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

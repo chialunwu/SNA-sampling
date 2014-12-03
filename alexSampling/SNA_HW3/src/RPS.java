@@ -20,7 +20,7 @@ public class RPS {
 	
 	public static void main(String[] args)
 	{
-		if (args.length != 6)
+		if (args.length != 5)
 		{
 			System.out.println("Wrong number of args");
 			System.out.println("Usage: java -cp SNA_HW3.jar RPS <graph outputfile name> <query outputDirectory name> <query times> <output ans dir> <attri index>");
@@ -28,11 +28,11 @@ public class RPS {
 		}
 		else
 		{
-			graphFileName = args[1];
-			queryOutputDirName = args[2];
-			queryNum = Integer.parseInt(args[3]);
-			outputAnsDirName = args[4];
-			attributeIndex = Integer.parseInt(args[5]);
+			graphFileName = args[0];
+			queryOutputDirName = args[1];
+			queryNum = Integer.parseInt(args[2]);
+			outputAnsDirName = args[3];
+			attributeIndex = Integer.parseInt(args[4]);
 		}
 		
 		File outputFile = new File(graphFileName);

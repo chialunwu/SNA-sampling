@@ -5,7 +5,6 @@ import networkx as nx
 from model.social_network import SocialNetwork
 import sys
 from math import *
-from scipy import stats
 
 
 def bin_hist(d, bin_size):
@@ -63,24 +62,24 @@ try:
     ori = sys.argv[-2]
     spl = sys.argv[-1]
 except:
-    print "-------- Usage -------"
-    print "\nNAME\n\tevaluate - evaluate sample graph with original graph"
-    print "\nSYNOPSIS\n\tevaluate OPTION ORINAL_FILE SAMLE_FILE"
-    print "\nDESCRIPTION"
-    print "\t-d, [--bin]\n\t\tdegree distribution\n\t\t--bin: bin width"
-    print "\t-n\n\t\tnode attribute distribution"
-    print "\t-c\n\t\tcloseness centrality"
-    print "\nFILE FORMAT"
-    print "\tformat in a line"
-    print "\t-d"
-    print "\t\tORINAL_FILE: degree  degree_count\\n"
-    print "\t\tSAMPLE_FILE: degree  degree_count\\n"
-    print "\t-n"
-    print "\t\tORINAL_FILE: attr_id attr_count\\n"
-    print "\t\tSAMPLE_FILE: attr_id attr_count\\n"
-    print "\t-c"
-    print "\t\tORINAL_FILE: node_id (rank i in line i)\\n"
-    print "\t\tSAMPLE_FILE: node_id (rank i in line i)\\n"
+    print("-------- Usage -------")
+    print("\nNAME\n\tevaluate - evaluate sample graph with original graph")
+    print("\nSYNOPSIS\n\tevaluate OPTION ORINAL_FILE SAMLE_FILE")
+    print("\nDESCRIPTION")
+    print("\t-d, [--bin]\n\t\tdegree distribution\n\t\t--bin: bin width")
+    print("\t-n\n\t\tnode attribute distribution")
+    print("\t-c\n\t\tcloseness centrality")
+    print("\nFILE FORMAT")
+    print("\tformat in a line")
+    print("\t-d")
+    print("\t\tORINAL_FILE: degree  degree_count\\n")
+    print("\t\tSAMPLE_FILE: degree  degree_count\\n")
+    print("\t-n")
+    print("\t\tORINAL_FILE: attr_id attr_count\\n")
+    print("\t\tSAMPLE_FILE: attr_id attr_count\\n")
+    print("\t-c")
+    print("\t\tORINAL_FILE: node_id (rank i in line i)\\n")
+    print("\t\tSAMPLE_FILE: node_id (rank i in line i)\\n")
     sys.exit()
 
 if method == '-d':
@@ -101,17 +100,17 @@ if method == '-d':
     sd += [0] * (len(od) - len(sd))
 
     # KL-divergence
-    print "KL divergence: %f" % KL_divergence(od, sd)
+    print("KL divergence: %f" % KL_divergence(od, sd)
 elif method == '-n':
     od = load_dist(ori)
     sd = load_dist(spl)
 
     # KL-divergence
-    print "KL divergence: %f" % KL_divergence(od, sd)
+    print("KL divergence: %f" % KL_divergence(od, sd))
 elif method == '-c':
     ol = load_rank(ori)
     sl = load_rank(spl)
     R = float(sum([ol.index(e) for e in sl]))/len(sl)
 
     # Average true rank
-    print "Average true rank: %f" % R
+    print("Average true rank: %f" % R)

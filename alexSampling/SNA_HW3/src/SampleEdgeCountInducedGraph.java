@@ -14,7 +14,7 @@ public class SampleEdgeCountInducedGraph {
 	
 	public static void main(String[] args)
 	{
-		if (args.length != 5)
+		if (args.length != 4)
 		{
 			System.out.println("Wrong number of args");
 			System.out.println("Usage: java -cp SNA_HW3.jar SampleEdgeCountInducedGraph <graph outputfile name> <query outputDirectory name> <query times> <output ans dir>");
@@ -22,10 +22,10 @@ public class SampleEdgeCountInducedGraph {
 		}
 		else
 		{
-			graphFileName = args[1];
-			queryOutputDirName = args[2];
-			queryNum = Integer.parseInt(args[3]);
-			outputAnsDirName = args[4];
+			graphFileName = args[0];
+			queryOutputDirName = args[1];
+			queryNum = Integer.parseInt(args[2]);
+			outputAnsDirName = args[3];
 		}
 		
 		File outputFile = new File(graphFileName);

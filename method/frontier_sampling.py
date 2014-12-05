@@ -38,13 +38,16 @@ def frontier_sample(budget, num_seed, add_all_neighbor=False):
         cdf = get_cdf([e['degree'] for e in seeds.values()])
         u = seeds_id[bisect(cdf, rd.random())]
 
-        # Select an outgoing edge of u, (u, v), uniformly at random
         s = get_node(u)
         neighbors = {}
         for e in s['neighbors']:
             id = e.pop('id')
             neighbors[id] = e
         neighbors_id = neighbors.keys()
+
+        # Select an outgoing edge of u, (u, v), uniformly at random
+        # cdf = get_cdf([e['degree'] for e in neighbors.values()])
+        # v = neighbors_id[bisect(cdf, rd.random())]
         v = rd.choice(neighbors_id)
 
         # Replace u by v in seeds list and add (u, v) to sequence of sampled edges

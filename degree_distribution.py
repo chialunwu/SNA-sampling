@@ -4,7 +4,7 @@ from model.social_network import SocialNetwork
 import sys
 
 
-def output_degree_hist(g, file_name, real=True):
+def output_degree_hist(g, file_name, real=True, fit_degree=False):
     # Degree distribution
     if real:
         degrees = g.degree().values()  # dictionary node:degree
@@ -13,9 +13,15 @@ def output_degree_hist(g, file_name, real=True):
     values = sorted(set(degrees))
     hist = [degrees.count(x) for x in values]
 
+    if fit_degree:
+        y = sum(hist)
+        for i in range(len(hist)):
+            hist[i] = (float(hist[i]) / y) / values[i]
+
+
     with open(file_name, 'w') as f:
         for i in range(len(hist)):
-            f.write('%d\t%d\n' % (values[i], hist[i]))
+            f.write('%d\t%f\n' % (values[i], hist[i]))
 
 
 if __name__ == "__main__":

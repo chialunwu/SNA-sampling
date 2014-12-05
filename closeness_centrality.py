@@ -14,5 +14,5 @@ cc = nx.closeness_centrality(m.G)
 
 x = graph.split('.')
 with open(x[0]+'_closeness_centrality.'+x[1], 'w') as f:
-    for k, v in cc:
+    for k, v in cc.items():
         f.write('%d\t%f\n' % (k, v))

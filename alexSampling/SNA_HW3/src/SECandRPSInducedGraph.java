@@ -11,8 +11,8 @@ public class SECandRPSInducedGraph {
 	public static String graphFileName = "SECandRPSInducedGraph.txt";
 	public static String queryOutputDirName = "/SECandRPSInducedGraph";
 	public static String outputAnsDirName = "./SECandRPSInducedGraphOutputAns";
-	public static int queryNumSEC = 10;
-	public static int queryNumRPS = 140;
+	public static int queryNumSEC = 6;
+	public static int queryNumRPS = 200;
 	
 	public static int attributeIndex = -1;
 	
@@ -199,7 +199,7 @@ public class SECandRPSInducedGraph {
 			}
 		}
 		
-		System.out.println(maxExpectedDeltaRP);
+		//System.out.println(maxExpectedDeltaRP);
 		return nodeWithMaxEDRP;
 	}
 	
@@ -302,13 +302,13 @@ public class SECandRPSInducedGraph {
 				deltaMatrix[getTypeIndex((SECandRPSNode)n)][getTypeIndex(addedNode)]++;
 			}
 			
-			System.out.println("Delta:");
+			/*System.out.println("Delta:");
 			for (int i = 0; i < RPCount.length; i++)
 			{
 				for (int j = 0; j < RPCount.length; j++)
 					System.out.print(deltaMatrix[i][j]+"\t");
 				System.out.println();
-			}
+			}*/
 			
 			double delta = 0;
 			for (int i = 0; i < typeDegree.length; i++)
@@ -317,7 +317,7 @@ public class SECandRPSInducedGraph {
 					if (typeDegree[i] != 0)
 						delta += ((double)deltaMatrix[i][j] / typeDegree[i]) * ((double)deltaMatrix[i][j] / typeDegree[i]);
 				}
-			delta /=  typeDegree.length*typeDegree.length;
+			delta /=  typeDegree.length*typeDegree.length*gm.getDegree(addedNode);//*gm.getDegree(addedNode);
 			delta = Math.sqrt(delta);
 			
 			return delta;
@@ -335,7 +335,7 @@ public class SECandRPSInducedGraph {
 					typeDegree[getTypeIndex(addedNode)]++;
 				}
 			}
-			
+			/*
 			System.out.println("RPCount:");
 			for (int i = 0; i < RPCount.length; i++)
 			{
@@ -346,6 +346,7 @@ public class SECandRPSInducedGraph {
 			System.out.println("typeDrgree:");
 			for (int i = 0; i < typeDegree.length; i++)
 				System.out.println(typeDegree[i]);
+				*/
 		}
 		
 	}

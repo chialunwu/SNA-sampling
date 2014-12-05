@@ -8,6 +8,8 @@ graph = sys.argv[1]  # data/public_edges.txt
 
 m = SocialNetwork(graph)
 
+print("Number of nodes: %d" % len(m.G.nodes()))
+print("Calculating...")
 cc = nx.closeness_centrality(m.G)
 
 x = graph.split('.')

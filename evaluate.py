@@ -99,73 +99,78 @@ def draw_hist(bin, od, sd, KL, rotation=50):
     plt.show()
 
 
-try:
-    method = sys.argv[1]  # degree dist:-d, closeness: -c, node: -n
-    ori = sys.argv[-2]
-    spl = sys.argv[-1]
-except:
-    print("-------------------- Manual -------------------")
-    print("\nNAME\n\tevaluate - evaluate sample graph with original graph")
-    print("\nSYNOPSIS\n\tevaluate OPTION ORINAL_FILE SAMLE_FILE")
-    print("\nDESCRIPTION")
-    print("\tEPSILON: 0.00001")
-    print("\t-d [--plot]\n\t\tdegree distribution")
-    print("\t-n\n\t\tnode attribute distribution")
-    print("\t-c\n\t\tcloseness centrality")
-    print("\nFILE FORMAT")
-    print("\tformat in a line")
-    print("\t-d")
-    print("\t\tORINAL_FILE: degree  degree_count\\n")
-    print("\t\tSAMPLE_FILE: degree  degree_count\\n")
-    print("\t-n")
-    print("\t\tORINAL_FILE: attr_id attr_count\\n")
-    print("\t\tSAMPLE_FILE: attr_id attr_count\\n")
-    print("\t-c")
-    print("\t\tORINAL_FILE: node_id (rank i in line i)\\n")
-    print("\t\tSAMPLE_FILE: node_id (rank i in line i)\\n")
-    sys.exit()
+def evaluate(method, ori, spl, plot=False):
+    if method == '-d':
+        bin = [[1, 1], [2, 2], [3, 3], [4, 6], [7, 10], [11, 15], [16, 21], [22, 28], [29, 36], [37, 45], [46, 55],
+               [56, 70], [71, 100], [101, 200], [201]]
 
-if method == '-d':
-    bin = [[1, 1], [2, 2], [3, 3], [4, 6], [7, 10], [11, 15], [16, 21], [22, 28], [29, 36], [37, 45], [46, 55],
-           [56, 70], [71, 100], [101, 200], [201]]
+        # Degree distribution of original graph
+        od = load_dist(ori)
+        od = bin_hist(od, bin)
 
-    # Degree distribution of original graph
-    od = load_dist(ori)
-    od = bin_hist(od, bin)
+        # Degree distribution of sampled graph
+        sd = load_dist(spl)
+        sd = bin_hist(sd, bin)
 
-    # Degree distribution of sampled graph
-    sd = load_dist(spl)
-    sd = bin_hist(sd, bin)
+        # KL-divergence
+        print("Degree KL divergence: %f" % KL_divergence(od, sd))
 
-    # KL-divergence
-    print("KL divergence: %f" % KL_divergence(od, sd))
+        if plot:
+            draw_hist(bin, od, sd, KL_divergence(od, sd))
+    elif method == '-n':
+        od = load_dist(ori)
+        sd = load_dist(spl)
 
-    if "--plot" in sys.argv:
-        draw_hist(bin, od, sd, KL_divergence(od, sd))
-elif method == '-n':
-    od = load_dist(ori)
-    sd = load_dist(spl)
+        bin = list(od.keys())
 
-    bin = list(od.keys())
+        ok = [k for k in od.keys()]
+        od = sum_to_one([e for e in od.values()])
 
-    ok = [k for k in od.keys()]
-    od = sum_to_one([e for e in od.values()])
+        td = [EPSILON] * len(od)
+        for k, v in sd.items():
+            if k in ok:
+                td[ok.index(k)] = v
+        sd = sum_to_one(td)
 
-    td = [EPSILON] * len(od)
-    for k, v in sd.items():
-        if k in ok:
-            td[ok.index(k)] = v
-    sd = sum_to_one(td)
+        # KL-divergence
+        print("Node KL divergence: %f" % KL_divergence(od, sd))
 
-    # KL-divergence
-    print("KL divergence: %f" % KL_divergence(od, sd))
+        if plot:
+            draw_hist(bin, od, sd, KL_divergence(od, sd), rotation=90)
+    elif method == '-c':
+        ol = load_rank(ori)
+        sl = load_rank(spl)
+        R = float(sum([ol.index(e) for e in sl if e in ol])) / len(sl)
 
-    if "--plot" in sys.argv:
-        draw_hist(bin, od, sd, KL_divergence(od, sd), rotation=90)
-elif method == '-c':
-    ol = load_rank(ori)
-    sl = load_rank(spl)
-    R = float(sum([ol.index(e) for e in sl if e in ol])) / len(sl)
+        # Average true rank
+        print("Average true rank: %f" % R)
 
-    # Average true rank
-    print("Average true rank: %f" % R)
+
+if __name__ == '__main__':
+    try:
+        method = sys.argv[1]  # degree dist:-d, closeness: -c, node: -n
+        ori = sys.argv[-2]
+        spl = sys.argv[-1]
+        evaluate(method, ori, spl, "--plot" in sys.argv)
+    except:
+        print("-------------------- Manual -------------------")
+        print("\nNAME\n\tevaluate - evaluate sample graph with original graph")
+        print("\nSYNOPSIS\n\tevaluate OPTION ORINAL_FILE SAMLE_FILE")
+        print("\nDESCRIPTION")
+        print("\tEPSILON: 0.00001")
+        print("\t-d [--plot]\n\t\tdegree distribution")
+        print("\t-n\n\t\tnode attribute distribution")
+        print("\t-c\n\t\tcloseness centrality")
+        print("\nFILE FORMAT")
+        print("\tformat in a line")
+        print("\t-d")
+        print("\t\tORINAL_FILE: degree  degree_count\\n")
+        print("\t\tSAMPLE_FILE: degree  degree_count\\n")
+        print("\t-n")
+        print("\t\tORINAL_FILE: attr_id attr_count\\n")
+        print("\t\tSAMPLE_FILE: attr_id attr_count\\n")
+        print("\t-c")
+        print("\t\tORINAL_FILE: node_id (rank i in line i)\\n")
+        print("\t\tSAMPLE_FILE: node_id (rank i in line i)\\n")
+        sys.exit()
+

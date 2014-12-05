@@ -13,7 +13,7 @@ public class RPSInducedGraph {
 	
 	public static int attributeIndex = -1;
 	
-	private static final int[] histogram = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,40,50,60,70,80,90,100,200};
+	private static final int[] histogram = new int[]{2,3,4,7,11,16,22,29,37,46,56,71,101,201};
 	
 	private static final int[] dimension = new int[]{2, 2, 10, 10, 140};
 	
@@ -48,7 +48,8 @@ public class RPSInducedGraph {
 			
 			RPSGraphManipulation gm = new RPSGraphManipulation();
 			String seedsStr = Query.getSeeds();
-			ArrayList<Node> sampleNode = gm.uniformSampleFromSeeds(seedsStr, 1);
+			//ArrayList<Node> sampleNode = gm.uniformSampleFromSeeds(seedsStr, 1);
+			ArrayList<Node> sampleNode = gm.selectBiggestDegreeNodeFromSeeds(seedsStr);
 			
 			RPStatistic theRPStatistic = null;
 			if (attributeIndex == -1)
@@ -102,19 +103,22 @@ public class RPSInducedGraph {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			
+			gm.evaluateSample(outputAnsDirName);
 			gm.outputGraph(graphFileName);
 		}
 		else
 		{
 			GraphManipulation gm = new GraphManipulation();
 			gm.readGraph(graphFileName);
-			gm.visualizeGraph();
+			//gm.visualizeGraph();
 			try {
 				gm.outputAns(outputAnsDirName);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			gm.evaluateSample(outputAnsDirName);
 		}
 	}
 	
@@ -284,6 +288,14 @@ public class RPSInducedGraph {
 				deltaMatrix[getTypeIndex((RPSNode)n)][getTypeIndex(addedNode)]++;
 			}
 			
+			System.out.println("Delta:");
+			for (int i = 0; i < RPCount.length; i++)
+			{
+				for (int j = 0; j < RPCount.length; j++)
+					System.out.print(deltaMatrix[i][j]+"\t");
+				System.out.println();
+			}
+			
 			double delta = 0;
 			for (int i = 0; i < typeDegree.length; i++)
 				for (int j = 0; j < typeDegree.length; j++)
@@ -309,6 +321,17 @@ public class RPSInducedGraph {
 					typeDegree[getTypeIndex(addedNode)]++;
 				}
 			}
+			
+			System.out.println("RPCount:");
+			for (int i = 0; i < RPCount.length; i++)
+			{
+				for (int j = 0; j < RPCount.length; j++)
+					System.out.print(RPCount[i][j]+"\t");
+				System.out.println();
+			}
+			System.out.println("typeDrgree:");
+			for (int i = 0; i < typeDegree.length; i++)
+				System.out.println(typeDegree[i]);
 		}
 		
 	}

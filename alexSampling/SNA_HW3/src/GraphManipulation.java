@@ -95,6 +95,30 @@ public class GraphManipulation {
 		return sampleNode;
 	}
 	
+	public ArrayList<Node> selectBiggestDegreeNodeFromSeeds(String getSeedsReturnStr)
+	{
+		String[] token;
+		String[] lines = getSeedsReturnStr.split("\n");
+		token = lines[2].split(" ");
+		nodeAttriNum = Integer.parseInt(token[0]);
+		edgeAttriNum = Integer.parseInt(token[1]);
+		
+		int seedNum = Integer.parseInt(lines[3]);
+		Node node;
+		Node maxDegreeNode = getVertex(lines[4], nodes);;
+		ArrayList<Node> sampleNode = new ArrayList<Node>(1);
+		
+		for (int i = 5; i < seedNum; i++)
+		{
+			node = getVertex(lines[i], nodes);
+			if (node.degree > maxDegreeNode.degree)
+				maxDegreeNode = node;
+		}
+		addVertex(maxDegreeNode, g, nodes);
+		sampleNode.add(maxDegreeNode);
+		return sampleNode;
+	}
+	
 	public ArrayList<Edge> getNeighborReturnParse(int nodeID, String getNeighborReturnStr)
 	{
 		String[] token;
@@ -168,9 +192,13 @@ public class GraphManipulation {
 			int maxDegree = 0;
 			for (Node n:g.getVertices())
 			{
-				if (maxDegree < g.getNeighborCount(n))
+				/*if (maxDegree < g.getNeighborCount(n))
 					maxDegree = g.getNeighborCount(n);
 				degree[g.getNeighborCount(n)]++;
+				*/
+				if (maxDegree < n.degree)
+					maxDegree = n.degree;
+				degree[n.degree]++;
 			}
 			
 			for (int i = 1; i < maxDegree+1; i++)
@@ -196,7 +224,7 @@ public class GraphManipulation {
 			}
 			
 			//output closeness
-			PrintStream outputCloseness = new PrintStream(new File(outputAnsDirName+"/closeness.txt"));
+			/*PrintStream outputCloseness = new PrintStream(new File(outputAnsDirName+"/closeness.txt"));
 			DistanceCentralityScorer<Node, Edge> closenessScorer = new DistanceCentralityScorer<Node, Edge> (g, true);
 			int[] nodeID = new int[g.getVertexCount()];
 			double[] score = new double[g.getVertexCount()];
@@ -221,9 +249,44 @@ public class GraphManipulation {
 				e.printStackTrace();
 				e.printStackTrace(outputCloseness);
 			}
-			outputCloseness.close();
+			outputCloseness.close();*/
 		}
 		
+	}
+	
+	public void evaluateSample(String outputAnsDirName)
+	{
+		String evaluate = "python ..\\..\\evaluate.py";
+		String originalFile = "..\\..\\original\\public_nodes_distribution_attr_1.txt";
+		String testFile = outputAnsDirName+"/node_attr_1.txt";
+		System.out.print("attribute 1: ");
+		doscmd.cmdCall(evaluate+" -n "+originalFile+" "+testFile);
+		originalFile = "..\\..\\original\\public_nodes_distribution_attr_2.txt";
+		testFile = outputAnsDirName+"/node_attr_2.txt";
+		System.out.print("attribute 2: ");
+		doscmd.cmdCall(evaluate+" -n "+originalFile+" "+testFile);
+		originalFile = "..\\..\\original\\public_nodes_distribution_attr_3.txt";
+		testFile = outputAnsDirName+"/node_attr_3.txt";
+		System.out.print("attribute 3: ");
+		doscmd.cmdCall(evaluate+" -n "+originalFile+" "+testFile);
+		originalFile = "..\\..\\original\\public_nodes_distribution_attr_4.txt";
+		testFile = outputAnsDirName+"/node_attr_4.txt";
+		System.out.print("attribute 4: ");
+		doscmd.cmdCall(evaluate+" -n "+originalFile+" "+testFile);
+		originalFile = "..\\..\\original\\public_nodes_distribution_attr_5.txt";
+		testFile = outputAnsDirName+"/node_attr_5.txt";
+		System.out.print("attribute 5: ");
+		doscmd.cmdCall(evaluate+" -n "+originalFile+" "+testFile);
+		
+		originalFile = "..\\..\\original\\public_edges_degree_distribution.txt";
+		testFile = outputAnsDirName+"/degree.txt";
+		System.out.print("degree: ");
+		doscmd.cmdCall(evaluate+" -d "+originalFile+" "+testFile);
+		
+		originalFile = "..\\..\\original\\public_closeness.txt";
+		testFile = outputAnsDirName+"/closeness.txt";
+		System.out.print("closeness: ");
+		doscmd.cmdCall(evaluate+" -c "+originalFile+" "+testFile);
 	}
 	
 	private static int partition(int index[], double arr[], int left, int right)

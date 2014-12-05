@@ -38,7 +38,8 @@ public class SampleEdgeCount {
 			
 			
 			GraphManipulation gm = new GraphManipulation();
-			ArrayList<Node> sampleNode = gm.uniformSampleFromSeeds(Query.getSeeds(), 1);
+			//ArrayList<Node> sampleNode = gm.uniformSampleFromSeeds(Query.getSeeds(), 1);
+			ArrayList<Node> sampleNode = gm.selectBiggestDegreeNodeFromSeeds(Query.getSeeds());
 			Node currentNode = sampleNode.get(0);
 			ArrayList<Edge> neighbors = new ArrayList<Edge>();
 			for (int i = 1; i < queryNum; i++)
@@ -67,6 +68,7 @@ public class SampleEdgeCount {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			gm.evaluateSample(outputAnsDirName);
 			gm.outputGraph(graphFileName);
 		}
 		else
@@ -80,6 +82,7 @@ public class SampleEdgeCount {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			gm.evaluateSample(outputAnsDirName);
 		}
 	}
 	

@@ -3,7 +3,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class SampleEdgeCountInducedGraph {
 	
@@ -40,42 +41,49 @@ public class SampleEdgeCountInducedGraph {
 				return;
 			}
 			
-			GraphManipulation gWalker = new GraphManipulation();
-			ArrayList<Node> sampleNode = gWalker.uniformSampleFromSeeds(Query.getSeeds(), 1);
-			Node currentNode = sampleNode.get(0);
+			SECGraphManipulation gm = new SECGraphManipulation();
+			//ArrayList<Node> sampleNode = gWalker.uniformSampleFromSeeds(Query.getSeeds(), 1);
+			ArrayList<Node> sampleNode = gm.selectBiggestDegreeNodeFromSeeds(Query.getSeeds());
+			SECNode currentNode = (SECNode)sampleNode.get(0);
 			ArrayList<Edge> neighbors = new ArrayList<Edge>();
-			ArrayList<Node> addedOrder = new ArrayList<Node>();
-			addedOrder.add(currentNode);
+			ArrayList<Edge> neighborsEdge = new ArrayList<Edge>();
 			for (int i = 1; i < queryNum; i++)
 			{
 				if (i % 10 == 0)
 					System.out.println(i);
-				neighbors.addAll(gWalker.getNeighborReturnParse(currentNode.nodeID, Query.getNeighbor(currentNode.nodeID)));
-				Edge biggest = biggestEdgeCountNeighbor(gWalker, currentNode, neighbors);
+				neighborsEdge = gm.getNeighborReturnParse(currentNode.nodeID, Query.getNeighbor(currentNode.nodeID));
+				currentNode.neighborsEdge = neighborsEdge;
+				currentNode.neighbors = new HashSet<SECNode>();
+				for (Edge e:neighborsEdge)
+				{
+					if (!gm.containsVertex(e.node2))
+					{
+						neighbors.add(e);
+						gm.addVertex(e.node2);
+					}
+					gm.addEdge(e);
+					currentNode.neighbors.add((SECNode)e.node2);
+					if (((SECNode)e.node2).neighborsEdge == null)
+					{
+						if (((SECNode)e.node2).neighbors == null)
+							((SECNode)e.node2).neighbors = new HashSet<SECNode>();
+						((SECNode)e.node2).neighbors.add((SECNode)e.node1);
+					}
+				}
 				
-				if (gWalker.containsVertex(biggest.node2))
-				{
-					System.out.println("No new neighbor in this node");
-					addedOrder.add(biggest.node2);
-					currentNode = biggest.node2;
-				}
-				else
-				{
-					gWalker.addVertex(biggest.node2);
-					gWalker.addEdge(biggest);
-					addedOrder.add(biggest.node2);
-					currentNode = biggest.node2;
-				}
+				Edge biggest = biggestEdgeCountNeighbor(gm, currentNode, neighbors);
+				
+				currentNode = (SECNode)biggest.node2;
 			}
 			
-			GraphManipulation inducedG = inducedGraphFromQueryOutputFile(queryNum, addedOrder);
 			try {
-				inducedG.outputAns(outputAnsDirName);
+				gm.outputAns(outputAnsDirName);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			inducedG.outputGraph(graphFileName);
+			gm.evaluateSample(outputAnsDirName);
+			gm.outputGraph(graphFileName);
 		}
 		else
 		{
@@ -88,6 +96,7 @@ public class SampleEdgeCountInducedGraph {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			gm.evaluateSample(outputAnsDirName);
 		}
 	}
 	
@@ -115,7 +124,7 @@ public class SampleEdgeCountInducedGraph {
 		ArrayList<Edge> removeList = new ArrayList<Edge>();
 		for (Edge n:neighbors)
 		{
-			if (gm.containsVertex(n.node2))
+			if (((SECNode)n.node2).neighborsEdge != null)		//already query
 				removeList.add(n);
 			else if (n.node2.degree > biggest.node2.degree)		//not traversed yet, and bigger
 				biggest = n;
@@ -167,6 +176,50 @@ public class SampleEdgeCountInducedGraph {
 			e.printStackTrace();
 		}
 		return inducedG;
+	}
+	
+	//inner classes definition
+	static class SECNode extends Node
+	{
+
+		public ArrayList<Edge> neighborsEdge;
+		public HashSet<SECNode> neighbors;
+		
+		public SECNode(String nodeStr) {
+			super(nodeStr);
+			// TODO Auto-generated constructor stub
+		}
+		
+		public int getType(int typeAttributeIndex)
+		{
+			if (typeAttributeIndex == -1)
+				return degree;
+			else
+				return attributes[typeAttributeIndex];
+		}
+		
+	}
+	
+	static class SECGraphManipulation extends GraphManipulation
+	{
+		public void addAllInducedEdge(SECNode node)
+		{
+			for (Edge e:node.neighborsEdge)
+				if (g.containsVertex(e.node2))
+					this.addEdge(e);
+		}
+		
+		protected Node getVertex(String nodeStr, HashMap<Integer, Node> nodes)
+		{
+			int nodeID = Integer.parseInt(nodeStr.split(" ")[0]);
+			
+			if (nodes.containsKey(nodeID))
+				return nodes.get(nodeID);
+			else
+			{
+				return new SECNode(nodeStr);
+			}
+		}
 	}
 	
 }

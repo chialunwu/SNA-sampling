@@ -8,6 +8,8 @@ from math import *
 import matplotlib.pyplot as plt
 
 EPSILON = 0.00001
+BIN = [[1, 1], [2, 2], [3, 3], [4, 6], [7, 10], [11, 15], [16, 21], [22, 28], [29, 36], [37, 45], [46, 55],
+       [56, 70], [71, 100], [101, 200], [201]]
 
 
 def sum_to_one(li):
@@ -17,6 +19,7 @@ def sum_to_one(li):
         l.append(float(k) / y)
 
     return l
+
 
 def bin_hist(d, bin):
     hist = [EPSILON] * len(bin)
@@ -98,24 +101,47 @@ def draw_hist(bin, od, sd, KL, rotation=50):
     plt.show()
 
 
+def output_final_degree_hist(fn):
+    sd = load_dist(fn)
+    sd = bin_hist(sd, BIN)
+
+    x = fn.split('.')
+    with open(x[0]+'_final.'+x[1], 'w') as f:
+        for i, e in enumerate(sd):
+            start = BIN[i][0]
+            end = 0 if len(BIN[i]) == 1 else BIN[i][1]
+            f.write('%d %d %f\n' % (start, end, e))
+
+
+def output_final_attr_hist(fn, range_start, range_end):
+    sd = load_dist(fn)
+    td = [EPSILON] * (range_end-range_start+1)
+    r = range(range_start, range_end+1)
+    for k, v in sd.items():
+        td[r.index(k)] = v
+    sd = sum_to_one(td)
+
+    x = fn.split('.')
+    with open(x[0]+'_final.'+x[1], 'w') as f:
+        for i, e in enumerate(sd):
+            f.write('%d %f\n' % (r[i], e))
+
+
 def evaluate(method, ori, spl, plot=False):
     if method == '-d':
-        bin = [[1, 1], [2, 2], [3, 3], [4, 6], [7, 10], [11, 15], [16, 21], [22, 28], [29, 36], [37, 45], [46, 55],
-               [56, 70], [71, 100], [101, 200], [201]]
-
         # Degree distribution of original graph
         od = load_dist(ori)
-        od = bin_hist(od, bin)
+        od = bin_hist(od, BIN)
 
         # Degree distribution of sampled graph
         sd = load_dist(spl)
-        sd = bin_hist(sd, bin)
+        sd = bin_hist(sd, BIN)
 
         # KL-divergence
         print("Degree KL divergence: %f" % KL_divergence(od, sd))
 
         if plot:
-            draw_hist(bin, od, sd, KL_divergence(od, sd))
+            draw_hist(BIN, od, sd, KL_divergence(od, sd))
     elif method == '-n':
         od = load_dist(ori)
         sd = load_dist(spl)

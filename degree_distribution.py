@@ -28,6 +28,6 @@ if __name__ == "__main__":
     graph = sys.argv[1]  # data/public_edges.txt
     m = SocialNetwork(graph)
     x = graph.split('.')
-    output_degree_hist(m.G, x[0]+'_degree_distribution'+x[1])
+    output_degree_hist(m.G, x[0]+'_degree_distribution.'+x[1])
 
 

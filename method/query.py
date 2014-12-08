@@ -8,11 +8,19 @@ def __query(url):
     return response.read().decode("utf-8")
 
 
+def __save(node_id, data):
+    with open('../output/query/%d.txt' % node_id, 'w') as f:
+        f.write(data)
+
+
 def get_node(node, team="4MdY9pZz6b"):
     assert(type(node) is int)
     url = "/SNA2014/hw3/query.php?team=" + team
     url += "&node=" + str(node)
     data = __query(url)
+    # Save data fro safety...
+    __save(node, data)
+
     d = {}
     data = data.strip().split('\n')
     d['num_queries'] = int(data[1])

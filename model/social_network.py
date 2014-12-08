@@ -13,5 +13,5 @@ class SocialNetwork():
         # Edges
         with open(edge_file, 'r') as f:
             for l in f:
-                l = l.strip().split(',')
+                l = l.strip().split()
                 self.G.add_edge(int(l[0]), int(l[1]))

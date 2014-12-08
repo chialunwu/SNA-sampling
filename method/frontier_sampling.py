@@ -1,5 +1,6 @@
 __author__ = 'bingo4508'
 
+# from query_test import *
 from query import *
 import networkx as nx
 import random as rd
@@ -16,7 +17,14 @@ def get_cdf(degrees):
     return cdf
 
 
-def frontier_sample(budget, num_seed, add_all_neighbor=False):
+def get_cdf_for_rw(degrees, p_degree):
+    x = []
+    for e in degrees:
+        x.append((1.0/e)*min(1, float(p_degree)/e))
+    return get_cdf(x)
+
+
+def frontier_sample(budget, num_seed, add_all_neighbor=False, debug=False):
     g = nx.Graph()
     s = get_subgraph()
 
@@ -25,13 +33,16 @@ def frontier_sample(budget, num_seed, add_all_neighbor=False):
 
     # Select seeds
     seeds = sorted(g.nodes(data=True), key=lambda (a, dct): dct['degree'], reverse=True)[:num_seed]
+    # seeds = rd.sample(g.nodes(data=True), num_seed)
+
     x = {}
     for e in seeds:
         x[e[0]] = e[1]
     seeds = x
 
     for i in range(budget):
-        print("Budget left: %d" % (budget-i))
+        if debug:
+            print("Budget left: %d" % (budget-i))
 
         # Select a node from seeds list with probability of degree
         seeds_id = seeds.keys()
@@ -47,6 +58,7 @@ def frontier_sample(budget, num_seed, add_all_neighbor=False):
 
         # Select an outgoing edge of u, (u, v), uniformly at random
         # cdf = get_cdf([e['degree'] for e in neighbors.values()])
+        # cdf = get_cdf_for_rw([e['degree'] for e in neighbors.values()], s['degree'])
         # v = neighbors_id[bisect(cdf, rd.random())]
         v = rd.choice(neighbors_id)
 
